@@ -18,3 +18,7 @@ reference :
 https://github.com/anandanand84/technicalindicators
 
 https://github.com/pilwon/node-yahoo-finance
+
+testing url: https://mighty-ridge-81444.herokuapp.com/stock/quote/1
+
+# remark the symbol temporary hardcode for .HK 
