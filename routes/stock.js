@@ -1,29 +1,18 @@
 var express = require('express');
 var yahooFinance = require('yahoo-finance');
 
-// var technicalindicators = require('technicalindicators');
-// var AbandonedBaby = technicalindicators.abandonedbaby;
-// var bearishengulfingpattern = technicalindicators.bearishengulfingpattern;
-// var threewhitesoldiers = technicalindicators.threewhitesoldiers;
-// var threeblackcrows = technicalindicators.threeblackcrows;
-// var morningstar = technicalindicators.morningstar;
-// var morningdojistar = technicalindicators.morningdojistar;
-// var eveningstar = technicalindicators.eveningstar;
-// var eveningdojistar = technicalindicators.eveningdojistar;
-// var bullishengulfingpattern = technicalindicators.bullishengulfingpattern;
-// var bearishengulfingpattern = technicalindicators.bearishengulfingpattern;
+var technicalindicators = require('technicalindicators');
+var AbandonedBaby = technicalindicators.abandonedbaby;
+var bearishengulfingpattern = technicalindicators.bearishengulfingpattern;
+var threewhitesoldiers = technicalindicators.threewhitesoldiers;
+var threeblackcrows = technicalindicators.threeblackcrows;
+var morningstar = technicalindicators.morningstar;
+var morningdojistar = technicalindicators.morningdojistar;
+var eveningstar = technicalindicators.eveningstar;
+var eveningdojistar = technicalindicators.eveningdojistar;
+var bullishengulfingpattern = technicalindicators.bullishengulfingpattern;
+var bearishengulfingpattern = technicalindicators.bearishengulfingpattern;
 
-// var AbandonedBaby = require('AbandonedBaby');
-
-// var bearishengulfingpattern = require('bearishengulfingpattern');
-// var threewhitesoldiers = require('threewhitesoldiers');
-// var threeblackcrows = require('threeblackcrows');
-// var morningstar = require('morningstar');
-// var morningdojistar = require('morningdojistar');
-// var eveningstar = require('eveningstar');
-// var eveningdojistar = require('eveningdojistar');
-// var bullishengulfingpattern = require('bullishengulfingpattern');
-// var bearishengulfingpattern = require('bearishengulfingpattern');
 
 var router = express.Router();
 /* GET users listing. */
@@ -155,165 +144,162 @@ function pad(n, width, z) {
 }
 module.exports = router;
 
-//input should have 3 days open high close low
+function check_pattern(data) {
+    let data_3 = data.slice(0, 3);
+    let open_3 = data_3.map(x => x.open);
+    let high_3 = data_3.map(x => x.high);
+    let close_3 = data_3.map(x => x.close);
+    let low_3 = data_3.map(x => x.low);
 
+    let result_3 = check_3days_pattern(open_3, close_3, high_3, low_3);
 
-// function check_pattern(data) {
-//     let data_3 = data.slice(0, 3);
-//     let open_3 = data_3.map(x => x.open);
-//     let high_3 = data_3.map(x => x.high);
-//     let close_3 = data_3.map(x => x.close);
-//     let low_3 = data_3.map(x => x.low);
+    let data_2 = data.slice(0, 2);
+    let open_2 = data_2.map(x => x.open);
+    let high_2 = data_2.map(x => x.high);
+    let close_2 = data_2.map(x => x.close);
+    let low_2 = data_2.map(x => x.low);
 
-//     let result_3 = check_3days_pattern(open_3, close_3, high_3, low_3);
+    let result_2 = check_2days_pattern(open_2, close_2, high_2, low_2);
 
-//     let data_2 = data.slice(0, 2);
-//     let open_2 = data_2.map(x => x.open);
-//     let high_2 = data_2.map(x => x.high);
-//     let close_2 = data_2.map(x => x.close);
-//     let low_2 = data_2.map(x => x.low);
+    return result_2.concat(result_3);
+}
 
-//     let result_2 = check_2days_pattern(open_2, close_2, high_2, low_2);
+function check_2days_pattern(open, close, high, low) {
+    var input = {
+        open: open,
+        close: close,
+        high: high,
+        low: low
+    }
+    let return_result = [];
+    var check_bearishengulfingpattern_result = check_bearishengulfingpattern(input);
+    var check_bullishengulfingpattern_result = check_bullishengulfingpattern(input);
+    if (check_bearishengulfingpattern_result.result) {
+        return_result.push(check_bearishengulfingpattern_result);
+    }
+    if (check_bullishengulfingpattern_result.result) {
+        return_result.push(check_bullishengulfingpattern_result);
+    }
+    return return_result;
+}
 
-//     return result_2.concat(result_3);
-// }
+function check_bearishengulfingpattern(input) {
+    var result = bearishengulfingpattern(input);
+    console.log('Is bullishengulfingpattern? :' + result);
+    return {
+        pattern: 'bearishengulfingpattern',
+        result: result,
+        rank: 1,
+    };
+}
 
-// function check_2days_pattern(open, close, high, low) {
-//     var input = {
-//         open: open,
-//         close: close,
-//         high: high,
-//         low: low
-//     }
-//     let return_result = [];
-//     var check_bearishengulfingpattern_result = check_bearishengulfingpattern(input);
-//     var check_bullishengulfingpattern_result = check_bullishengulfingpattern(input);
-//     if (check_bearishengulfingpattern_result.result) {
-//         return_result.push(check_bearishengulfingpattern_result);
-//     }
-//     if (check_bullishengulfingpattern_result.result) {
-//         return_result.push(check_bullishengulfingpattern_result);
-//     }
-//     return return_result;
-// }
+function check_bullishengulfingpattern(input) {
+    var result = bullishengulfingpattern(input);
+    console.log('Is bullishengulfingpattern? :' + result);
+    return {
+        pattern: 'bullishengulfingpattern',
+        result: result,
+        rank: 5,
+    };
+}
 
-// function check_bearishengulfingpattern(input) {
-//     var result = bearishengulfingpattern(input);
-//     console.log('Is bullishengulfingpattern? :' + result);
-//     return {
-//         pattern: 'bearishengulfingpattern',
-//         result: result,
-//         rank: 1,
-//     };
-// }
+function check_3days_pattern(open, close, high, low) {
+    var input = {
+        open: open,
+        close: close,
+        high: high,
+        low: low
+    }
+    console.log(input);
+    let return_result = [];
+    var check_threewhitesoldiers_result = check_threewhitesoldiers(input);
+    // var check_AbandonedBaby_result = check_AbandonedBaby(input);
+    var check_threeblackcrows_result = check_threeblackcrows(input);
+    var check_morningstar_result = check_morningstar(input);
+    var check_morningdojistar_result = check_morningdojistar(input);
+    var check_eveningstar_result = check_eveningstar(input);
+    var check_eveningdojistar_result = check_eveningdojistar(input);
 
-// function check_bullishengulfingpattern(input) {
-//     var result = bullishengulfingpattern(input);
-//     console.log('Is bullishengulfingpattern? :' + result);
-//     return {
-//         pattern: 'bullishengulfingpattern',
-//         result: result,
-//         rank: 5,
-//     };
-// }
+    if (check_threewhitesoldiers_result.result) {
+        return_result.push(check_threewhitesoldiers_result);
+    }
+    // if (check_AbandonedBaby_result.result) {
+    //     return_result.push(check_AbandonedBaby_result);
+    // }
+    if (check_threeblackcrows_result.result) {
+        return_result.push(check_threeblackcrows_result);
+    }
+    if (check_morningstar_result.result) {
+        return_result.push(check_morningstar_result);
+    }
+    if (check_morningdojistar_result.result) {
+        return_result.push(check_morningdojistar_result);
+    }
+    if (check_eveningstar_result.result) {
+        return_result.push(check_eveningstar_result);
+    }
+    if (check_eveningdojistar_result.result) {
+        return_result.push(check_eveningdojistar_result);
+    }
+    return return_result;
+}
 
-// function check_3days_pattern(open, close, high, low) {
-//     var input = {
-//         open: open,
-//         close: close,
-//         high: high,
-//         low: low
-//     }
-//     console.log(input);
-//     let return_result = [];
-//     var check_threewhitesoldiers_result = check_threewhitesoldiers(input);
-//     // var check_AbandonedBaby_result = check_AbandonedBaby(input);
-//     var check_threeblackcrows_result = check_threeblackcrows(input);
-//     var check_morningstar_result = check_morningstar(input);
-//     var check_morningdojistar_result = check_morningdojistar(input);
-//     var check_eveningstar_result = check_eveningstar(input);
-//     var check_eveningdojistar_result = check_eveningdojistar(input);
+function check_threewhitesoldiers(input) {
+    var result = threewhitesoldiers(input);
+    console.log('Is Three White Soldiers Pattern? :' + result);
+    return {
+        pattern: 'threewhitesoldiers',
+        result: result,
+        rank: 5,
+    };
+}
 
-//     if (check_threewhitesoldiers_result.result) {
-//         return_result.push(check_threewhitesoldiers_result);
-//     }
-//     // if (check_AbandonedBaby_result.result) {
-//     //     return_result.push(check_AbandonedBaby_result);
-//     // }
-//     if (check_threeblackcrows_result.result) {
-//         return_result.push(check_threeblackcrows_result);
-//     }
-//     if (check_morningstar_result.result) {
-//         return_result.push(check_morningstar_result);
-//     }
-//     if (check_morningdojistar_result.result) {
-//         return_result.push(check_morningdojistar_result);
-//     }
-//     if (check_eveningstar_result.result) {
-//         return_result.push(check_eveningstar_result);
-//     }
-//     if (check_eveningdojistar_result.result) {
-//         return_result.push(check_eveningdojistar_result);
-//     }
-//     return return_result;
-// }
+function check_threeblackcrows(input) {
+    let result = threeblackcrows(input);
+    console.log('Is Three Black Crows Pattern? :' + result);
+    return {
+        pattern: 'threeblackcrows',
+        result: result,
+        rank: 1,
+    };
+}
 
-// function check_threewhitesoldiers(input) {
-//     var result = threewhitesoldiers(input);
-//     console.log('Is Three White Soldiers Pattern? :' + result);
-//     return {
-//         pattern: 'threewhitesoldiers',
-//         result: result,
-//         rank: 5,
-//     };
-// }
+function check_morningstar(input) {
+    var result = morningstar(input);
+    console.log('Is morningstar? :' + result);
+    return {
+        pattern: 'morningstar',
+        result: result,
+        rank: 5,
+    };
+}
 
-// function check_threeblackcrows(input) {
-//     let result = threeblackcrows(input);
-//     console.log('Is Three Black Crows Pattern? :' + result);
-//     return {
-//         pattern: 'threeblackcrows',
-//         result: result,
-//         rank: 1,
-//     };
-// }
+function check_morningdojistar(input) {
+    var result = morningdojistar(input)
+    console.log('Is morningdojistar? :' + result);
+    return {
+        pattern: 'morningdojistar',
+        result: result,
+        rank: 5,
+    };
+}
 
-// function check_morningstar(input) {
-//     var result = morningstar(input);
-//     console.log('Is morningstar? :' + result);
-//     return {
-//         pattern: 'morningstar',
-//         result: result,
-//         rank: 5,
-//     };
-// }
+function check_eveningstar(input) {
+    var result = eveningstar(input)
+    console.log('Is eveningstar? :' + result);
+    return {
+        pattern: 'eveningstar',
+        result: result,
+        rank: 1,
+    };
+}
 
-// function check_morningdojistar(input) {
-//     var result = morningdojistar(input)
-//     console.log('Is morningdojistar? :' + result);
-//     return {
-//         pattern: 'morningdojistar',
-//         result: result,
-//         rank: 5,
-//     };
-// }
-
-// function check_eveningstar(input) {
-//     var result = eveningstar(input)
-//     console.log('Is eveningstar? :' + result);
-//     return {
-//         pattern: 'eveningstar',
-//         result: result,
-//         rank: 1,
-//     };
-// }
-
-// function check_eveningdojistar(input) {
-//     var result = eveningdojistar(input)
-//     console.log('Is eveningdojistar? :' + result);
-//     return {
-//         pattern: 'eveningdojistar',
-//         result: result,
-//         rank: 1,
-//     };
-// }
+function check_eveningdojistar(input) {
+    var result = eveningdojistar(input)
+    console.log('Is eveningdojistar? :' + result);
+    return {
+        pattern: 'eveningdojistar',
+        result: result,
+        rank: 1,
+    };
+}
