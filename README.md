@@ -13,11 +13,11 @@
    get recent 3 days for candles checking.
   Post body data { symbol : 1 } 
 
-#reference : 
+# 6. reference : 
 https://github.com/anandanand84/technicalindicators
 https://github.com/pilwon/node-yahoo-finance
 
-#testing url 
+# 7. testing url 
 https://mighty-ridge-81444.herokuapp.com/stock/quote/1
 
-# remark the symbol temporary hardcode for .HK 
+# 8. remark the symbol temporary hardcode for .HK 
