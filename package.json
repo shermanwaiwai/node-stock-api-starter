@@ -1,0 +1,28 @@
+{
+  "name": "node-api-test",
+  "version": "0.0.0",
+  "private": true,
+  "main": "node server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "jade": "~1.11.0",
+    "morgan": "~1.8.1",
+    "serve-favicon": "~2.4.2",
+    "technicalindicators": "^1.0.5",
+    "yahoo-finance": "^0.3.2"
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "express"
+  ],
+  "engines": {
+    "node": "6.10.2"
+  }
+}
